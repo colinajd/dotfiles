@@ -1,17 +1,46 @@
 #Docker
 export DOCKER_HOST=tcp://0.0.0.0:2375
-export PATH=$PATH:$PATH:~/bin:/mnt/c/Users/ColinAJD/AppData/Local/atom/bin
+export PATH=$PATH:$PATH:~/bin
 
 #Aliases
 alias atom='wstart atom'
+alias dbuild='wstart docker-compose build'
 alias dup='wstart docker-compose up -d'
 alias ddown='docker-compose down'
-alias dbuild='wstart docker-compose build'
+
+#Digital Ocean
+droplets() {
+    local action=$1
+    local param2=$2
+    local param3=$3
+
+    case $action in
+        list )
+            command doctl compute droplet list
+        ;;
+        create )
+            case $param2 in
+                small )
+                    command doctl compute droplet create $param3 --region lon1 --image ubuntu-16-04-x64 --size 512mb;;
+                medium )
+                    command doctl compute droplet create $param3 --region lon1 --image ubuntu-16-04-x64 --size 1gb;;
+                large )
+                    command doctl compute droplet create $param3 --region lon1 --image ubuntu-16-04-x64 --size 2gb;;
+            esac
+        ;;
+        delete )
+            command doctl compute droplet delete $param2
+        ;;
+        ssh )
+            command doctl compute ssh $param2
+        ;;
+    esac
+}
 
 #ZPLUG
 source ~/.zplug/init.zsh
 
-zplug mafredri/zsh-async, from:github, defer:0  # Load this first
+zplug mafredri/zsh-async, from:github, defer:0
 zplug sindresorhus/pure, use:pure.zsh, from:github, as:theme
 
 # Install plugins if there are plugins that have not been installed
